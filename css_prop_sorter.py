@@ -433,7 +433,7 @@ def sort_properties(stdin_buffer):
     This function depends on 'prioritify' function.
     '''
 
-    pattern = re.compile(r'(.*{\r?\n?)(.*)(}.*)', re.DOTALL + re.MULTILINE)
+    pattern = re.compile(r'(.*?{\r?\n?)(.*?)(}.*?)', re.DOTALL + re.MULTILINE)
     matched_patterns = pattern.findall(stdin_buffer)
     sorted_patterns = []
     sorted_buffer = stdin_buffer
