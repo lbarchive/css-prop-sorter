@@ -420,7 +420,7 @@ def prioritify(line_buffer):
     priority = 9999
 
     for css_property in css_properties:
-        if line_buffer.find(css_property) != -1:
+        if line_buffer.find(css_property + ':') != -1:
             priority = css_properties.index(css_property)
             break
 
