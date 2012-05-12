@@ -16,6 +16,7 @@ Original author: Kyo Nagashima <kyo@hail2u.net>, http://hail2u.net/
 License: MIT license (http://opensource.org/licenses/mit-license.php)
 '''
 
+import argparse
 import sys
 import re
 
@@ -450,10 +451,28 @@ def sort_properties(stdin_buffer):
     return sorted_buffer
 
 if __name__ == '__main__':
-    sorted_buffer = sort_properties(sys.stdin.read())
+    parser = argparse.ArgumentParser()
+    if sys.stdin.isatty():
+        parser.add_argument('infile',
+                            nargs='?',
+                            default=sys.stdin,
+                            type=argparse.FileType('r'),
+                            help='Input file',
+                            metavar='INFILE')
+    parser.add_argument('outfile',
+                        nargs='?',
+                        default=sys.stdout,
+                        type=argparse.FileType('w'),
+                        help='Output file',
+                        metavar='OUTFILE')
+    args = parser.parse_args()
+    if not sys.stdin.isatty():
+        args.infile = sys.stdin
+
+    sorted_buffer = sort_properties(args.infile.read())
 
     if not isinstance(sorted_buffer, str):
         sys.stderr.write('Error')
         sys.exit(2)
 
-    sys.stdout.write(sorted_buffer)
+    args.outfile.write(sorted_buffer)
