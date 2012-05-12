@@ -427,7 +427,7 @@ def prioritify(line_buffer):
 
     return priority
 
-def sort_properties(stdin_buffer):
+def sort_properties(stdin_buffer, args):
     '''CSS Property Sorter Function
     This function will read buffer argument, split it to a list by lines,
     sort it by defined rule, and return sorted buffer if it's CSS property.
@@ -442,16 +442,24 @@ def sort_properties(stdin_buffer):
     if len(matched_patterns) != 0:
         for matched_groups in matched_patterns:
             sorted_patterns += matched_groups[0].splitlines(True)
-            sorted_patterns += sorted(matched_groups[1].splitlines(True),
-                                      key=prioritify)
+            props = sorted(matched_groups[1].splitlines(True),
+                           key=prioritify)
+            props = filter(lambda line: line.strip(), props)
+            sorted_patterns += props
             sorted_patterns += matched_groups[2].splitlines(True)
 
         sorted_buffer = ''.join(sorted_patterns)
 
     return sorted_buffer
 
-if __name__ == '__main__':
+def make_parser():
+
     parser = argparse.ArgumentParser()
+    return parser
+
+if __name__ == '__main__':
+
+    parser = make_parser()
     if sys.stdin.isatty():
         parser.add_argument('infile',
                             nargs='?',
@@ -469,7 +477,7 @@ if __name__ == '__main__':
     if not sys.stdin.isatty():
         args.infile = sys.stdin
 
-    sorted_buffer = sort_properties(args.infile.read())
+    sorted_buffer = sort_properties(args.infile.read(), args)
 
     if not isinstance(sorted_buffer, str):
         sys.stderr.write('Error')
