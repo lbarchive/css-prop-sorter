@@ -434,19 +434,23 @@ def sort_properties(stdin_buffer, args):
     This function depends on 'prioritify' function.
     '''
 
-    pattern = re.compile(r'(.*?{\r?\n?)(.*?)(}.*?)', re.DOTALL + re.MULTILINE)
+    pattern = re.compile(r'(.*?{\r?\n?)(.*?)(}.*?)|(.*)', re.DOTALL + re.MULTILINE)
     matched_patterns = pattern.findall(stdin_buffer)
     sorted_patterns = []
     sorted_buffer = stdin_buffer
 
+    RE_prop = re.compile(r'((?:.*?)(?:;)(?:.*?\n)|(?:.*))', re.DOTALL + re.MULTILINE)
+
     if len(matched_patterns) != 0:
         for matched_groups in matched_patterns:
             sorted_patterns += matched_groups[0].splitlines(True)
-            props = sorted(matched_groups[1].splitlines(True),
-                           key=prioritify)
-            props = filter(lambda line: line.strip(), props)
+            props = map(lambda line: line.lstrip('\n'),
+                        RE_prop.findall(matched_groups[1]))
+            props = filter(lambda line: line.strip('\n '), props)
+            props = sorted(props, key=prioritify)
             sorted_patterns += props
             sorted_patterns += matched_groups[2].splitlines(True)
+            sorted_patterns += matched_groups[3].splitlines(True)
 
         sorted_buffer = ''.join(sorted_patterns)
 
