@@ -50,7 +50,7 @@ This will automatically sort your CSS properties.
 ### Notes
 
 * You can just type `:SortCSS` so that entire properties will be sorted in a file.
-* You can also append arguments as if using `sortcss.py` directly, e.g. `:SortCSS -g` for groupping.
+* You can also append arguments as if using `sortcss.py` directly, e.g. `:SortCSS -g` for grouping.
 
 ## Credits
 
@@ -61,7 +61,7 @@ This script is based on Kyo Nagashima's Perl script:
 http://hail2u.net/blog/coding/perl-sort-css-properties.html
 
 * Yu-Jie Lin, http://yjl.im
-* Yu I. <Twitter @japboy>
+* Yu I., Twitter @japboy
 * Kyo Nagashima <kyo@hail2u.net>, http://hail2u.net/
 * xaicron, http://blog.livedoor.jp/xaicron/
 
