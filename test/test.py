@@ -16,7 +16,9 @@ import unittest
 import sys
 
 sys.path.append('..')
+sys.dont_write_bytecode = True
 from sortcss import make_parser, sort_properties as SP
+sys.dont_write_bytecode = False
 
 
 def F(filename):
