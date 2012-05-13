@@ -2,19 +2,31 @@
 # -*- coding: utf-8 -*-
 
 '''CSS Property Sorter Script
-This script will sort CSS properties by defined rule. Script reads standard
-input and sort it by lines if the lines are CSS property, and write them to
-standard output.
+This script will sort CSS properties by defined rule.
+
+WEBSITE
+https://github.com/livibetter/css-prop-sorter
 
 CREDITS
 This script is based on Kyo Nagashima's Perl script:
 http://hail2u.net/blog/coding/perl-sort-css-properties.html
 
+Author: Yu-Jie Lin <livibetter@gmail.com>, http://yjl.im
 Author: Yu I. <Twitter @japboy>
 Original author: Kyo Nagashima <kyo@hail2u.net>, http://hail2u.net/
                  xaicron, http://blog.livedoor.jp/xaicron/
-License: MIT license (http://opensource.org/licenses/mit-license.php)
+License: MIT license, see COPYING
 '''
+
+__program__     = 'sortcss.py'
+__version__     = '0.1.0'
+__license__     = 'MIT'
+__description__ = 'CSS Property Sorter Script'
+__website__     = 'https://github.com/livibetter/css-prop-sorter'
+
+__author__  = 'Yu-Jie Lin'
+__email__   = 'livibetter@gmail.com'
+__credits__ = ['Yu-Jie Lin', 'Yu I.', 'Kyo Nagashima', 'xaicron']
 
 import argparse
 import itertools
