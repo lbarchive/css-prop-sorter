@@ -16,7 +16,7 @@ import unittest
 import sys
 
 sys.path.append('..')
-from css_prop_sorter import make_parser, sort_properties as SP
+from sortcss import make_parser, sort_properties as SP
 
 
 def F(filename):

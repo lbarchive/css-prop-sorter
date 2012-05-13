@@ -7,7 +7,7 @@
 
 ```vim
 " CSS Property Sorter Script (:SortCSS to run)
-command! -range=% SortCSS :<line1>,<line2>!python /path/to/css_prop_sorter.py
+command! -range=% SortCSS :<line1>,<line2>!python /path/to/sortcss.py
 ```
 
 ## Usage in Vim
