@@ -17,13 +17,12 @@ License: MIT license (http://opensource.org/licenses/mit-license.php)
 '''
 
 import argparse
+import itertools
 import sys
 import re
 
-css_properties = []
-
+CSS_PROPS_TEXT = '''
 # CSS 2.1
-css_properties += '''
 margin-top
 margin-right
 margin-bottom
@@ -139,10 +138,8 @@ richness
 speak-punctuation
 speak-numeral
 speak-header
-'''.lstrip('\n').splitlines()
 
 # CSS 3 2D Transforms Module
-css_properties += '''
 transform
 -moz-transform
 -o-transform
@@ -150,20 +147,16 @@ transform
 transform-origin
 -moz-transform-origin
 -webkit-transform-origin
-'''.lstrip('\n').splitlines()
 
 # CSS 3 3D Transforms Module
-css_properties += '''
 perspective
 -webkit-perspective
 perspective-origin
 -webkit-perspective-origin
 backface-visibility
 -webkit-backface-visibility
-'''.lstrip('\n').splitlines()
 
 # CSS 3 Animations Module
-css_properties += '''
 animation-name
 -webkit-animation-name
 animation-duration
@@ -180,10 +173,8 @@ animation-delay
 -webkit-animation-delay
 animation
 -webkit-animation
-'''.lstrip('\n').splitlines()
 
 # CSS 3 Backgrounds and Borders Module
-css_properties += '''
 background-clip
 -moz-background-clip
 -webkit-background-clip
@@ -213,10 +204,8 @@ box-decoration-break
 box-shadow
 -moz-box-shadow
 -webkit-box-shadow
-'''.lstrip('\n').splitlines()
 
 # CSS 3 Basic Box Model Module
-css_properties += '''
 overflow-x
 -ms-overflow-x
 overflow-y
@@ -232,10 +221,8 @@ marquee-speed
 -webkit-marquee
 rotation
 rotation-point
-'''.lstrip('\n').splitlines()
 
 # CSS 3 Basic User Interface Module
-css_properties += '''
 appearance
 -moz-appearance
 -webkit-appearance
@@ -246,54 +233,40 @@ box-sizing
 outline-offset
 resize
 nav-index
-'''.lstrip('\n').splitlines()
 
 # CSS 3 Color Module
-css_properties += '''
 opacity
-'''.lstrip('\n').splitlines()
 
 # CSS 3 Fonts Module
-css_properties += '''
 font-stretch
 font-size-adjust
 src
 unicode-range
-'''.lstrip('\n').splitlines()
 
 # CSS 3 Generated Content for Paged Media Module
-css_properties += '''
 string-set
 bookmark-level
 bookmark-label
 bookmark-target
 bookmark-state
-'''.lstrip('\n').splitlines()
 
 # CSS 3 Grid Positioning Module
-css_properties += '''
 grid-columns
 grid-rows
-'''.lstrip('\n').splitlines()
 
 # CSS 3 Hyperlink Presentation Module
-css_properties += '''
 target-name
 target-new
 target-position
 target
-'''.lstrip('\n').splitlines()
 
 # CSS 3 Image Values and Replaced Content Module
-css_properties += '''
 linear-gradient
 -moz-linear-gradient
 -webkit-gradient
 image-resolution
-'''.lstrip('\n').splitlines()
 
 # CSS 3 Line Box Module
-css_properties += '''
 line-stacking-strategy
 line-stacking-ruby
 line-stacking-shift
@@ -308,10 +281,8 @@ drop-initial-before-align
 drop-initial-before-adjust
 drop-initial-after-align
 drop-initial-after-adjust
-'''.lstrip('\n').splitlines()
 
 # CSS 3 Multi-column Layout Module
-css_properties += '''
 column-width
 -moz-column-width
 -webkit-column-width
@@ -337,32 +308,24 @@ column-rule
 -webkit-column-rule
 column-span
 column-fill
-'''.lstrip('\n').splitlines()
 
 # CSS 3 Paged Media Module
-css_properties += '''
 size
 page
 image-orientation
 fit
 fit-position
-'''.lstrip('\n').splitlines()
 
 # CSS 3 Presentation Levels Module
-css_properties += '''
 presentation-level
-'''.lstrip('\n').splitlines()
 
 # CSS 3 Ruby Module
-css_properties += '''
 ruby-position
 ruby-align
 ruby-overhang
 ruby-span
-'''.lstrip('\n').splitlines()
 
 # CSS 3 Speech Module
-css_properties += '''
 voice-volume
 voice-balance
 rest-before
@@ -373,10 +336,8 @@ voice-pitch
 voice-range
 voice-stress
 voice-duration
-'''.lstrip('\n').splitlines()
 
 # CSS 3 Text Module
-css_properties += '''
 bikeshedding
 word-break
 -ms-word-break
@@ -396,10 +357,8 @@ hanging-punctuation
 text-emphasis
 text-shadow
 text-outline
-'''.lstrip('\n').splitlines()
 
 # CSS 3 Transitions Module
-css_properties += '''
 transition-property
 -webkit-transition-property
 transition-duration
@@ -410,22 +369,65 @@ transition-delay
 -webkit-transition-delay
 transition
 -webkit-transition
-'''.lstrip('\n').splitlines()
+'''
 
-def prioritify(line_buffer):
+def compile_props(props_text, grouped=False):
+
+    props = props_text.splitlines()
+    props = filter(lambda line: not line.startswith('#'), props)
+    if not grouped:
+        props = list(filter(None, props))
+        return props, [0]*len(props)
+
+    g_id = 0
+    final_props = []
+    groups = []
+    for prop in props:
+      if prop.strip():
+        final_props.append(prop)
+        groups.append(g_id)
+      else:
+        g_id += 1
+    return final_props, groups
+
+def prioritify(line_buffer, pgs):
     '''Prioritizer Function
     This function will return argument's priority. Priority will be integer and
     smaller number will be higher priority.
     '''
+    props, groups = pgs
 
     priority = 9999
+    group = 0
 
-    for css_property in css_properties:
+    for css_property in props:
         if line_buffer.find(css_property + ':') != -1:
-            priority = css_properties.index(css_property)
+            priority = props.index(css_property)
+            group = groups[priority]
             break
 
-    return priority
+    return priority, group
+
+def props_grouper(props, pgs):
+
+    if not props:
+        return props
+    # zip prop with priority and group_id
+    props_pg = zip(map(lambda prop: prioritify(prop, pgs), props), props)
+    # sort by group id
+    props_pg = sorted(props_pg, key=lambda item: item[0][1])
+    # group by group id
+    props_by_groups = map(lambda item: list(item[1]), itertools.groupby(props_pg, key=lambda item: item[0][1]))
+    # sort each group
+    props_by_groups = map(lambda item: sorted(item, key=lambda item: item[0][0]), props_by_groups)
+    props = []
+    for group in props_by_groups:
+        # drop pg
+        group = map(lambda item: item[1], group)
+        props += group
+        props += ['\n']
+    props.pop()
+    return props
 
 def sort_properties(stdin_buffer, args):
     '''CSS Property Sorter Function
@@ -433,6 +435,10 @@ def sort_properties(stdin_buffer, args):
     sort it by defined rule, and return sorted buffer if it's CSS property.
     This function depends on 'prioritify' function.
     '''
+    # Initializing
+    if 'css_props_text' not in args:
+        args.css_props_text = CSS_PROPS_TEXT
+    css_pgs = compile_props(args.css_props_text, args.group)
 
     pattern = re.compile(r'(.*?{\r?\n?)(.*?)(}.*?)|(.*)', re.DOTALL + re.MULTILINE)
     matched_patterns = pattern.findall(stdin_buffer)
@@ -446,8 +452,8 @@ def sort_properties(stdin_buffer, args):
             sorted_patterns += matched_groups[0].splitlines(True)
             props = map(lambda line: line.lstrip('\n'),
                         RE_prop.findall(matched_groups[1]))
-            props = filter(lambda line: line.strip('\n '), props)
-            props = sorted(props, key=prioritify)
+            props = list(filter(lambda line: line.strip('\n '), props))
+            props = props_grouper(props, css_pgs)
             sorted_patterns += props
             sorted_patterns += matched_groups[2].splitlines(True)
             sorted_patterns += matched_groups[3].splitlines(True)
@@ -459,11 +465,19 @@ def sort_properties(stdin_buffer, args):
 def make_parser():
 
     parser = argparse.ArgumentParser()
+    parser.add_argument('-g', '--group',
+                        action='store_true',
+                        default=False,
+                        help='group properties')
     return parser
 
 if __name__ == '__main__':
 
     parser = make_parser()
+    parser.add_argument('--css-props-file',
+                        nargs='?',
+                        type=argparse.FileType('r'),
+                        help='use custom CSS properties list file')
     if sys.stdin.isatty():
         parser.add_argument('infile',
                             nargs='?',
@@ -480,6 +494,9 @@ if __name__ == '__main__':
     args = parser.parse_args()
     if not sys.stdin.isatty():
         args.infile = sys.stdin
+
+    if args.css_props_file:
+        args.css_props_text = args.css_props_file.read()
 
     sorted_buffer = sort_properties(args.infile.read(), args)
 
