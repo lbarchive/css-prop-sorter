@@ -1,6 +1,22 @@
 # CSS Property Sorter Script
 
-## Command-line options
+## Installation
+
+    pip install sortcss.py
+
+### Setup for Vim
+
+1. Create `~/.vim/ftplugin/css.vim` if it's not existed yet.
+2. Open `~/.vim/ftplugin/css.vim` and add new lines below:
+
+```vim
+" CSS Property Sorter Script (:SortCSS to run)
+command! -range=% -nargs=* SortCSS :<line1>,<line2>!python /path/to/sortcss.py <f-args>
+```
+
+## Usage
+
+### Command-line options
 
     usage: sortcss.py [-h] [-g] [--css-props-file [CSS_PROPS_FILE]]
                       [INFILE] [OUTFILE]
@@ -15,7 +31,7 @@
       --css-props-file [CSS_PROPS_FILE]
                             use custom CSS properties list file
 
-### CSS properties list file
+#### CSS properties list file
 
 You can use custom list by supplying the file to `sortcss.py`, the basic format is:
 
@@ -28,17 +44,7 @@ You can use custom list by supplying the file to `sortcss.py`, the basic format 
 
 The order of properties is the order that`sortcss.py` sort by and the blank line also indicates separate groups. If you have `-g`, then `sortcss.py` will insert a blank line between the groups.
 
-## Setup for Vim
-
-1. Create `~/.vim/ftplugin/css.vim` if it's not existed yet.
-2. Open `~/.vim/ftplugin/css.vim` and add new lines below:
-
-```vim
-" CSS Property Sorter Script (:SortCSS to run)
-command! -range=% -nargs=* SortCSS :<line1>,<line2>!python /path/to/sortcss.py <f-args>
-```
-
-## Usage in Vim
+### Usage in Vim
 
 1. Open a CSS file in Vim.
 2. Turn in to Visual mode.
@@ -47,7 +53,7 @@ command! -range=% -nargs=* SortCSS :<line1>,<line2>!python /path/to/sortcss.py <
 
 This will automatically sort your CSS properties.
 
-### Notes
+#### Notes
 
 * You can just type `:SortCSS` so that entire properties will be sorted in a file.
 * You can also append arguments as if using `sortcss.py` directly, e.g. `:SortCSS -g` for grouping.
