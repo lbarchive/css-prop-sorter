@@ -6,10 +6,10 @@ script_name = 'sortcss.py'
 
 with open(script_name) as f:
   meta = dict(
-    (k.strip(' _'), eval(v)) for k, v in
-      # There will be a '\n', with eval(), it's safe to ignore
-      (line.split('=') for line in f if line.startswith('__'))
-    )
+    (k.strip(' _'), eval(v))
+    # There will be a '\n', with eval(), it's safe to ignore
+    for k, v in (line.split('=') for line in f if line.startswith('__'))
+  )
 
 classifiers = [
   'Development Status :: 3 - Alpha',
@@ -21,25 +21,25 @@ classifiers = [
   'Programming Language :: Python :: 2.7',
   'Programming Language :: Python :: 3',
   'Topic :: Utilities',
-  ]
+]
 
 setup_d = dict(
-  name        = meta['program'],
-  version     = meta['version'],
-  license     = meta['license'],
-  url         = meta['website'],
+  name=meta['program'],
+  version=meta['version'],
+  license=meta['license'],
+  url=meta['website'],
 
-  description = meta['description'],
+  description=meta['description'],
 
-  classifiers = classifiers,
+  classifiers=classifiers,
 
-  author       = meta['author'],
-  author_email = meta['email'],
-  
-  scripts = [script_name],
+  author=meta['author'],
+  author_email=meta['email'],
 
-  install_requires = ['distribute'],
-  )
+  scripts=[script_name],
+
+  install_requires=['distribute'],
+)
 
 if __name__ == '__main__':
   setup(**setup_d)

@@ -18,20 +18,21 @@ Original author: Kyo Nagashima <kyo@hail2u.net>, http://hail2u.net/
 License: MIT license, see COPYING
 '''
 
-__program__     = 'sortcss.py'
-__version__     = '0.1.0'
-__license__     = 'MIT'
+__program__ = 'sortcss.py'
+__version__ = '0.1.0'
+__license__ = 'MIT'
 __description__ = 'CSS Property Sorter Script'
-__website__     = 'https://github.com/livibetter/css-prop-sorter'
+__website__ = 'https://github.com/livibetter/css-prop-sorter'
 
-__author__  = 'Yu-Jie Lin'
-__email__   = 'livibetter@gmail.com'
+__author__ = 'Yu-Jie Lin'
+__email__ = 'livibetter@gmail.com'
 __credits__ = ['Yu-Jie Lin', 'Yu I.', 'Kyo Nagashima', 'xaicron']
 
 import argparse
 import itertools
-import sys
 import re
+import sys
+
 
 CSS_PROPS_TEXT = '''
 # CSS 2.1
@@ -383,13 +384,14 @@ transition
 -webkit-transition
 '''
 
+
 def compile_props(props_text, grouped=False):
 
     props = props_text.splitlines()
     props = filter(lambda line: not line.startswith('#'), props)
     if not grouped:
         props = list(filter(None, props))
-        return props, [0]*len(props)
+        return props, [0] * len(props)
 
     g_id = 0
     final_props = []
@@ -401,6 +403,7 @@ def compile_props(props_text, grouped=False):
       else:
         g_id += 1
     return final_props, groups
+
 
 def prioritify(line_buffer, pgs):
     '''Prioritizer Function
@@ -420,18 +423,25 @@ def prioritify(line_buffer, pgs):
 
     return priority, group
 
+
 def props_grouper(props, pgs):
 
     if not props:
         return props
+
     # zip prop with priority and group_id
     props_pg = zip(map(lambda prop: prioritify(prop, pgs), props), props)
+
     # sort by group id
     props_pg = sorted(props_pg, key=lambda item: item[0][1])
+
     # group by group id
-    props_by_groups = map(lambda item: list(item[1]), itertools.groupby(props_pg, key=lambda item: item[0][1]))
+    g = itertools.groupby(props_pg, key=lambda item: item[0][1])
+    props_by_groups = map(lambda item: list(item[1]), g)
+
     # sort each group
-    props_by_groups = map(lambda item: sorted(item, key=lambda item: item[0][0]), props_by_groups)
+    f = lambda item: sorted(item, key=lambda item: item[0][0])
+    props_by_groups = map(f, props_by_groups)
     props = []
     for group in props_by_groups:
         # drop pg
@@ -440,6 +450,7 @@ def props_grouper(props, pgs):
         props += ['\n']
     props.pop()
     return props
+
 
 def sort_properties(stdin_buffer, args):
     '''CSS Property Sorter Function
@@ -452,12 +463,13 @@ def sort_properties(stdin_buffer, args):
         args.css_props_text = CSS_PROPS_TEXT
     css_pgs = compile_props(args.css_props_text, args.group)
 
-    pattern = re.compile(r'(.*?{\r?\n?)(.*?)([ \t]*}.*?)|(.*)', re.DOTALL + re.MULTILINE)
+    flags = re.DOTALL + re.MULTILINE
+    pattern = re.compile(r'(.*?{\r?\n?)(.*?)([ \t]*}.*?)|(.*)', flags)
     matched_patterns = pattern.findall(stdin_buffer)
     sorted_patterns = []
     sorted_buffer = stdin_buffer
 
-    RE_prop = re.compile(r'((?:.*?)(?:;)(?:.*?\n)|(?:.*))', re.DOTALL + re.MULTILINE)
+    RE_prop = re.compile(r'((?:.*?)(?:;)(?:.*?\n)|(?:.*))', flags)
 
     if len(matched_patterns) != 0:
         for matched_groups in matched_patterns:
@@ -474,6 +486,7 @@ def sort_properties(stdin_buffer, args):
 
     return sorted_buffer
 
+
 def make_parser():
 
     parser = argparse.ArgumentParser()
@@ -482,6 +495,7 @@ def make_parser():
                         default=False,
                         help='group properties')
     return parser
+
 
 if __name__ == '__main__':
 
