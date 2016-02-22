@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python2.7
 # -*- coding: utf-8 -*-
 
 '''CSS Property Sorter Script
@@ -452,7 +452,7 @@ def sort_properties(stdin_buffer, args):
         args.css_props_text = CSS_PROPS_TEXT
     css_pgs = compile_props(args.css_props_text, args.group)
 
-    pattern = re.compile(r'(.*?{\r?\n?)(.*?)(}.*?)|(.*)', re.DOTALL + re.MULTILINE)
+    pattern = re.compile(r'(.*?{\r?\n?)(.*?)([ \t]*}.*?)|(.*)', re.DOTALL + re.MULTILINE)
     matched_patterns = pattern.findall(stdin_buffer)
     sorted_patterns = []
     sorted_buffer = stdin_buffer
