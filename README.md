@@ -60,10 +60,10 @@ This will automatically sort your CSS properties.
 
 ## Credits
 
-You can find more information about the script below:  
+You can find more information about the script below:
 http://lab.youck.org/css-property-order.html
 
-This script is based on Kyo Nagashima's Perl script:  
+This script is based on Kyo Nagashima's Perl script:
 http://hail2u.net/blog/coding/perl-sort-css-properties.html
 
 * Yu-Jie Lin, http://yjl.im
