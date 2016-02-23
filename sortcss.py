@@ -19,7 +19,7 @@ License: MIT license, see COPYING
 '''
 
 __program__ = 'sortcss.py'
-__version__ = '0.1.1'
+__version__ = '0.1.2'
 __license__ = 'MIT'
 __description__ = 'CSS Property Sorter Script'
 __website__ = 'https://github.com/livibetter/css-prop-sorter'
