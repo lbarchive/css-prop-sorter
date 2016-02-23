@@ -6,4 +6,4 @@ test:
 .PHONY: test
 
 upload:
-	python setup.py sdist --formats=bztar,gztar,zip bdist_wheel bdist_wininst --plat-name=win32 upload
+	python setup.py sdist --formats=bztar,gztar,zip bdist_wininst --plat-name=win32 upload
